@@ -22,14 +22,6 @@ class StudentSerializer(serializers.ModelSerializer):
         fields = ['id', 'full_name', 'username',
                   'email', 'student_group', 'password']
 
-    def create(self, validated_data):
-        name = validated_data.pop('username')
-        password = validated_data.pop('password')
-        student = Student(**validated_data)
-        student.set_password(password)
-        student.save()
-        return student
-
 
 class StudentGroupSerializer(serializers.ModelSerializer):
     class Meta:

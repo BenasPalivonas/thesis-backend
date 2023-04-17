@@ -30,12 +30,14 @@ class StudentGroup(models.Model):
 
 
 class Student(models.Model):
-    full_name = models.CharField(max_length=255, unique=True, blank=False)
-    username = models.CharField(max_length=255, unique=True, blank=False)
+    full_name = models.CharField(
+        max_length=255, unique=True, blank=False)
+    username = models.CharField(
+        max_length=255, unique=True, blank=False)
     email = models.EmailField(unique=True, blank=False)
-    password = forms.CharField(widget=forms.PasswordInput, required=True)
+    password = models.CharField(max_length=255)
     student_group = models.ForeignKey(
         StudentGroup, on_delete=models.CASCADE, related_name='student')
 
     def __str__(self):
-        return self.name
+        return self.username
