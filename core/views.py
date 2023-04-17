@@ -2,10 +2,10 @@ from rest_framework import generics, viewsets, filters
 from .models import Lecture, Lecturer, Student, StudentGroup
 from .serializers import LectureSerializer, LecturerSerializer, StudentGroupSerializer, StudentSerializer
 from rest_framework.response import Response
-from rest_framework import status, permissions
+from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.decorators import action
-from rest_framework.decorators import api_view
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 
 
 class LecturerList(generics.ListCreateAPIView):
@@ -51,9 +51,18 @@ class StudentGroupViewSet(viewsets.ModelViewSet):
     serializer_class = StudentGroupSerializer
 
 
-@api_view(['POST'])
-def login(request):
-    if request.method == "POST":
+class LoginView(APIView):
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['username', 'password'],
+            properties={
+                'username': openapi.Schema(type=openapi.TYPE_STRING),
+                'password': openapi.Schema(type=openapi.TYPE_STRING),
+            }
+        )
+    )
+    def post(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
         if username is None or password is None:
