@@ -1,3 +1,4 @@
+from requests import request
 from rest_framework import generics, viewsets, filters
 from .models import Lecture, Lecturer, Student, StudentGroup
 from .serializers import LectureSerializer, LecturerSerializer, StudentGroupSerializer, StudentSerializer
@@ -18,22 +19,25 @@ class LecturerDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = LecturerSerializer
 
 
-class LectureViewSet(viewsets.ModelViewSet):
-    queryset = Lecture.objects.all()
+class LectureViewSet(generics.ListCreateAPIView):
     serializer_class = LectureSerializer
-    filter_backends = [filters.SearchFilter]
+    # filter_backends = [filters.SearchFilter]
     search_fields = ['lecturer_id']
     search_param = 'lecturer_id'
+    queryset = Lecture.objects.all()
 
-    def get_queryset(self):
-        queryset = self.queryset
-        lecturer_id = self.request.query_params.get('lecturer_id', None)
-        # http://localhost:8000/api/lectures/?lecturer_id=1
+    # def get_queryset(self):
+    #     lecturer_id = self.request.query_params.get('lecturer_id', None)
+    #     # http://localhost:8000/api/lectures/?lecturer_id=1
+    #     lectures = []
+    #     if lecturer_id is not None:
+    #         print(lecturer_id)
+    #         lectures = Lecture.objects.filter(lecturer_id=lecturer_id)
+    #         print(lectures)
+    #     else:
+    #         lectures = Lecture.objects.all()
 
-        if lecturer_id is not None:
-            queryset = queryset.filter(lecturer_id=lecturer_id)
-
-        return queryset
+    #     return lectures
 
 
 class LectureDetail(generics.RetrieveUpdateDestroyAPIView):

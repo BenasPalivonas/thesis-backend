@@ -1,5 +1,8 @@
 from rest_framework import serializers
 from .models import StudentGroup, Lecture, Lecturer, Student
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+from django_filters import rest_framework as filters
 
 
 class LecturerSerializer(serializers.ModelSerializer):
@@ -9,9 +12,11 @@ class LecturerSerializer(serializers.ModelSerializer):
 
 
 class LectureSerializer(serializers.ModelSerializer):
+    lecturer = LecturerSerializer()
+
     class Meta:
         model = Lecture
-        fields = ['id', 'subject', 'lecturer']
+        fields = ['id', 'subject', 'lecturer', 'time', 'day_of_week', 'venue']
 
 
 class StudentSerializer(serializers.ModelSerializer):
