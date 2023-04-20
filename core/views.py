@@ -1,6 +1,6 @@
 from rest_framework import generics, viewsets
 from .models import Assignment, Lecture, LectureSubject, Lecturer, Student, StudentGroup
-from .serializers import AssignmentSerializer, LectureSerializer, LectureSubjectSerializer, LecturerSerializer, StudentGroupSerializer, StudentSerializer
+from .serializers import AssignmentCreateSerializer, AssignmentSerializer, LectureSerializer, LectureSubjectSerializer, LecturerSerializer, StudentGroupSerializer, StudentSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
@@ -59,9 +59,14 @@ class LectureSubjectGroupViewSet(generics.ListCreateAPIView):
     serializer_class = LectureSubjectSerializer
 
 
-class AssignmentGroupViewSet(generics.ListCreateAPIView):
+class AssignmentGroupViewSet(generics.ListAPIView):
     queryset = Assignment.objects.all()
     serializer_class = AssignmentSerializer
+
+
+class AssignmentGroupCreateViewSet(generics.CreateAPIView):
+    queryset = Assignment.objects.all()
+    serializer_class = AssignmentCreateSerializer
 
 
 class AssignmentDetail(generics.RetrieveUpdateDestroyAPIView):

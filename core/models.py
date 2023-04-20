@@ -87,7 +87,7 @@ class Assignment(models.Model):
     details = models.TextField(blank=False, null=False)
     completed = models.BooleanField(default=False, null=False)
     lecturer = models.ForeignKey(
-        Lecturer, on_delete=models.CASCADE, related_name='assignments', null=False, blank=False)
+        Lecturer, on_delete=models.CASCADE, related_name='assignments', null=True, blank=True)
 
     def __str__(self):
         return self.name

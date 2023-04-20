@@ -45,3 +45,16 @@ class AssignmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Assignment
         fields = '__all__'
+
+
+class AssignmentCreateSerializer(serializers.ModelSerializer):
+    subject_id = serializers.PrimaryKeyRelatedField(
+        queryset=LectureSubject.objects.all(),
+        source='subject',
+        write_only=True
+    )
+
+    class Meta:
+        model = Assignment
+        fields = ['name', 'due_date', 'details',
+                  'completed', 'subject_id']
