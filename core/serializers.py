@@ -1,8 +1,5 @@
 from rest_framework import serializers
-from .models import StudentGroup, Lecture, Lecturer, Student
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
-from django_filters import rest_framework as filters
+from .models import Assignment, LectureSubject, StudentGroup, Lecture, Lecturer, Student
 
 
 class LecturerSerializer(serializers.ModelSerializer):
@@ -11,8 +8,15 @@ class LecturerSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'email']
 
 
+class LectureSubjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LectureSubject
+        fields = '__all__'
+
+
 class LectureSerializer(serializers.ModelSerializer):
     lecturer = LecturerSerializer()
+    subject = LectureSubjectSerializer()
 
     class Meta:
         model = Lecture
@@ -34,7 +38,10 @@ class StudentGroupSerializer(serializers.ModelSerializer):
         fields = ['id', 'group_name']
 
 
-class LoginInfo:
-    def __init__(self, username: str, password: str):
-        self.username = username
-        self.password = password
+class AssignmentSerializer(serializers.ModelSerializer):
+    subject = LectureSubjectSerializer()
+    lecturer = LecturerSerializer()
+
+    class Meta:
+        model = Assignment
+        fields = '__all__'
