@@ -9,4 +9,5 @@ from core.views import send_notification
 def mymodel_created(sender, instance, created, **kwargs):
     if created:
         print('signals work')
-        send_notification(instance.name, instance.details)
+        if instance.lecturer is not None:
+            send_notification(instance.name, instance.details)
