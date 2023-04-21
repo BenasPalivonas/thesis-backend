@@ -6,6 +6,9 @@ from rest_framework import status
 from rest_framework.views import APIView
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
+from django.http import HttpResponse
+import requests
+import json
 
 
 class LecturerList(generics.ListCreateAPIView):
@@ -95,4 +98,44 @@ class LoginView(APIView):
             return Response({'success': False, 'error': 'Invalid username'}, status=status.HTTP_404_NOT_FOUND)
         if not student.password == password:
             return Response({'success': False, 'error': 'Invalid password'}, status=status.HTTP_401_UNAUTHORIZED)
-        return Response({'success': True})
+        return Response({'success': True, 'student_group': student.student_group.name, 'student_number': student.username})
+
+
+def send_notification(message_title, message_desc):
+    fcm_api = "AAAAS-Mm1Wc:APA91bE2r9SQh-oi1vnLtKQqcX_IczSv06Q_TisEIa54vFvvhXbPlNxZ4lOr-KbYP7_Ae44decZdusULdYmZhhFSx0Zv6cutcfzEODiJwQ1av8u0TKr4xvDpjIBPhhIOUUJxQbh5Vysi"
+    # url = "https://fcm.googleapis.com/fcm/send"
+
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": 'key='+fcm_api}
+
+    data = {
+        "priority": "high",
+        "title": message_title,
+        "body": message_desc
+    }
+
+    notification = {
+        "body": message_desc,
+        "title": message_title,
+    }
+
+    data = {
+        'to': 'dnpFsBiuQNGbYnIa2h6ZJe:APA91bHqRE8tclAXbYvWTt-Yx2iEfdnz5WgGNyT3WqpmxxRwOVE5yuWm8S5BEWoO4NeO4mERnexI5BZU5MX9o0UMHDVYgU0KJHJFfaKgmnZbGoLpB20W9EWe9HLPliZE2__GQ4wgMvdu',
+        'data': data,
+        'notification': notification
+    }
+    response = requests.post(
+        'https://fcm.googleapis.com/fcm/send', json=data, headers=headers)
+    if response.status_code == 200:
+        print('FCM message sent successfully')
+    else:
+        print('FCM message sending failed')
+
+    # result = requests.post(url,  data=json.dumps(payload), headers=headers)
+
+
+def send(request):
+    send_notification('Second Test',
+                      'Second Test')
+    return HttpResponse("sent")

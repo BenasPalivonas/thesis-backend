@@ -14,13 +14,21 @@ class LectureSubjectSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class StudentGroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudentGroup
+        fields = ['id', 'name']
+
+
 class LectureSerializer(serializers.ModelSerializer):
     lecturer = LecturerSerializer()
     subject = LectureSubjectSerializer()
+    student_groups = StudentGroupSerializer(many=True)
 
     class Meta:
         model = Lecture
-        fields = ['id', 'subject', 'lecturer', 'time', 'day_of_week', 'venue']
+        fields = ['id', 'subject', 'lecturer', 'time',
+                  'day_of_week', 'venue', 'student_groups']
 
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -30,12 +38,6 @@ class StudentSerializer(serializers.ModelSerializer):
         model = Student
         fields = ['id', 'full_name', 'username',
                   'email', 'student_group', 'password']
-
-
-class StudentGroupSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = StudentGroup
-        fields = ['id', 'group_name']
 
 
 class AssignmentSerializer(serializers.ModelSerializer):
