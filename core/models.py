@@ -1,7 +1,6 @@
 import datetime
 from django import forms
 from django.db import models
-from django.contrib.auth.models import AbstractUser, Group
 from enum import Enum
 
 
@@ -57,9 +56,16 @@ class LectureSubject(models.Model):
 class Lecturer(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
     email = models.EmailField(blank=False, null=False)
+    password = models.CharField(max_length=255, blank=False, null=False)
 
     def __str__(self):
         return self.name
+
+    def get_assignments(self):
+        return Assignment.objects.filter(lecturer=self)
+
+    def get_lectures(self):
+        return Lecture.objects.filter(lecturer=self)
 
 
 class Lecture(models.Model):

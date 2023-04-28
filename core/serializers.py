@@ -5,7 +5,7 @@ from .models import Assignment, LectureSubject, StudentGroup, Lecture, Lecturer,
 class LecturerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lecturer
-        fields = ['id', 'name', 'email']
+        fields = ['id', 'name', 'email', 'password']
 
 
 class LectureSubjectSerializer(serializers.ModelSerializer):
