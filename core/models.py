@@ -88,6 +88,15 @@ class Assignment(models.Model):
     completed = models.BooleanField(default=False, null=False)
     lecturer = models.ForeignKey(
         Lecturer, on_delete=models.CASCADE, related_name='assignments', null=True, blank=True)
+    student = models.ForeignKey(
+        Student, on_delete=models.CASCADE, related_name='student', null=True, blank=True)
 
     def __str__(self):
         return self.name
+
+    def clean(self):
+        super().clean()
+
+        if self.lecturer and self.student:
+            raise forms.ValidationError(
+                'An assignment cannot be created by both a lecturer and a student.')

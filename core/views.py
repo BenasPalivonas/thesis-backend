@@ -10,6 +10,8 @@ from django.http import HttpResponse
 import requests
 import json
 
+from core import models
+
 
 class LecturerList(generics.ListCreateAPIView):
     queryset = Lecturer.objects.all()
@@ -23,23 +25,9 @@ class LecturerDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class LectureViewSet(generics.ListCreateAPIView):
     serializer_class = LectureSerializer
-    # filter_backends = [filters.SearchFilter]
     search_fields = ['lecturer_id']
     search_param = 'lecturer_id'
     queryset = Lecture.objects.all()
-
-    # def get_queryset(self):
-    #     lecturer_id = self.request.query_params.get('lecturer_id', None)
-    #     # http://localhost:8000/api/lectures/?lecturer_id=1
-    #     lectures = []
-    #     if lecturer_id is not None:
-    #         print(lecturer_id)
-    #         lectures = Lecture.objects.filter(lecturer_id=lecturer_id)
-    #         print(lectures)
-    #     else:
-    #         lectures = Lecture.objects.all()
-
-    #     return lectures
 
 
 class LectureDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -98,7 +86,7 @@ class LoginView(APIView):
             return Response({'success': False, 'error': 'Invalid username'}, status=status.HTTP_404_NOT_FOUND)
         if not student.password == password:
             return Response({'success': False, 'error': 'Invalid password'}, status=status.HTTP_401_UNAUTHORIZED)
-        return Response({'success': True, 'student_group': student.student_group.name, 'student_number': student.username})
+        return Response({'success': True, 'id': student.id, 'student_group': student.student_group.name, 'student_number': student.username})
 
 
 def send_notification(message_title, message_desc):
@@ -133,6 +121,48 @@ def send_notification(message_title, message_desc):
         print('FCM message sending failed')
 
     # result = requests.post(url,  data=json.dumps(payload), headers=headers)
+
+
+def schedule_fcm_message(message_title, message_body, scheduled_time):
+    # Create a ScheduledMessage instance
+    scheduled_message = ScheduledMessage.objects.create(
+        message_title=message_title,
+        message_body=message_body,
+        scheduled_time=scheduled_time
+    )
+
+    # Get the UTC timestamp of the scheduled time
+    utc_scheduled_time = timezone.localtime(
+        scheduled_time).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+
+    # Get the registration IDs of the devices to send the message to
+    registration_ids = ["registration_id_1", "registration_id_2"]
+
+    # Schedule the FCM message using the Firebase Cloud Messaging API
+    send_at = {"sendAt": utc_scheduled_time}
+    payload = {"message": {"notification": {
+        "title": message_title, "body": message_body}}, "schedule": send_at}
+    response = send_fcm_message(registration_ids, payload)
+
+    # Update the ScheduledMessage instance with the FCM message ID and status
+    scheduled_message.fcm_message_id = response.json()['name']
+    scheduled_message.status = ScheduledMessage.SENT
+    scheduled_message.save()
+
+# model for scheduled messages
+# class ScheduledMessage(models.Model):
+#     SENT = 'SENT'
+#     PENDING = 'PENDING'
+#     STATUS_CHOICES = [
+#         (SENT, 'Sent'),
+#         (PENDING, 'Pending'),
+#     ]
+
+#     message_title = models.CharField(max_length=255)
+#     message_body = models.TextField()
+#     scheduled_time = models.DateTimeField()
+#     fcm_message_id = models.CharField(max_length=255, null=True, blank=True)
+#     status = models.CharField(max_length=7, choices=STATUS_CHOICES, default=PENDING)
 
 
 def send(request):

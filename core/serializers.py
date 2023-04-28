@@ -32,6 +32,7 @@ class LectureSerializer(serializers.ModelSerializer):
 
 
 class StudentSerializer(serializers.ModelSerializer):
+    student_group = StudentGroupSerializer()
     password = serializers.CharField(write_only=True)
 
     class Meta:
@@ -43,6 +44,7 @@ class StudentSerializer(serializers.ModelSerializer):
 class AssignmentSerializer(serializers.ModelSerializer):
     subject = LectureSubjectSerializer()
     lecturer = LecturerSerializer()
+    student = StudentSerializer()
 
     class Meta:
         model = Assignment
@@ -53,10 +55,19 @@ class AssignmentCreateSerializer(serializers.ModelSerializer):
     subject_id = serializers.PrimaryKeyRelatedField(
         queryset=LectureSubject.objects.all(),
         source='subject',
-        write_only=True
+        write_only=True,
+        required=False,
+        allow_null=True,
+    )
+    student_id = serializers.PrimaryKeyRelatedField(
+        queryset=Student.objects.all(),
+        source='student',
+        write_only=True,
+        required=False,
+        allow_null=True,
     )
 
     class Meta:
         model = Assignment
         fields = ['name', 'due_date', 'details',
-                  'completed', 'subject_id']
+                  'completed', 'subject_id', 'student_id']
