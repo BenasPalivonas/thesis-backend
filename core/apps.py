@@ -1,4 +1,5 @@
 from django.apps import AppConfig
+from django.db.models.signals import post_migrate
 
 
 class CoreConfig(AppConfig):
@@ -7,3 +8,5 @@ class CoreConfig(AppConfig):
 
     def ready(self):
         import core.signals
+        from .signals import create_group
+        post_migrate.connect(create_group, sender=self)
