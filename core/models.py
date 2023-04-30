@@ -68,6 +68,13 @@ class Lecturer(models.Model):
         return Lecture.objects.filter(lecturer=self)
 
 
+class Venue(models.Model):
+    name = models.CharField(max_length=255, null=False, blank=False)
+
+    def __str__(self):
+        return self.name
+
+
 class Lecture(models.Model):
     subject = models.ForeignKey(
         LectureSubject, on_delete=models.CASCADE, related_name='lectures', null=False)
@@ -75,7 +82,8 @@ class Lecture(models.Model):
         Lecturer, on_delete=models.CASCADE, related_name='lectures', null=False)
     student_groups = models.ManyToManyField(
         StudentGroup, blank=False)
-    venue = models.CharField(max_length=255, blank=False, null=False)
+    venue = models.ForeignKey(
+        Venue, on_delete=models.CASCADE, related_name='lectures', null=False)
     time = models.CharField(max_length=5, validators=[
                             validate_time_format], blank=False, null=False)
     day_of_week = models.CharField(
@@ -91,11 +99,11 @@ class Assignment(models.Model):
         LectureSubject, on_delete=models.CASCADE, related_name='assignments', null=False, blank=False)
     due_date = models.DateTimeField(blank=False, null=False)
     details = models.TextField(blank=False, null=False)
+    venue = models.ForeignKey(
+        Venue, on_delete=models.CASCADE, related_name='assignments', null=True, blank=True)
     completed = models.BooleanField(default=False, null=False)
     lecturer = models.ForeignKey(
         Lecturer, on_delete=models.CASCADE, related_name='assignments', null=True, blank=True)
-    student = models.ForeignKey(
-        Student, on_delete=models.CASCADE, related_name='student', null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -103,6 +111,6 @@ class Assignment(models.Model):
     def clean(self):
         super().clean()
 
-        if self.lecturer and self.student:
+        if self.created_by_lecturer and self.created_by_student:
             raise forms.ValidationError(
                 'An assignment cannot be created by both a lecturer and a student.')

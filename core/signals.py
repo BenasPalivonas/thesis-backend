@@ -10,7 +10,7 @@ from django.contrib.auth.models import User, Group
 def mymodel_created(sender, instance, created, **kwargs):
     if created:
         print('signals work')
-        if instance.lecturer is not None:
+        if instance.created_by_lecturer is not None:
             send_notification(instance.name, instance.details)
 
 

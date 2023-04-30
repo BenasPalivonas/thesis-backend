@@ -1,6 +1,6 @@
 from rest_framework import generics, viewsets
-from .models import Assignment, Lecture, LectureSubject, Lecturer, Student, StudentGroup
-from .serializers import AssignmentCreateSerializer, AssignmentSerializer, LectureSerializer, LectureSubjectSerializer, LecturerSerializer, StudentGroupSerializer, StudentSerializer
+from .models import Assignment, Venue, Lecture, LectureSubject, Lecturer, Student, StudentGroup
+from .serializers import AssignmentCreateSerializer, AssignmentSerializer, LectureSerializer, LectureSubjectSerializer, LecturerSerializer, StudentGroupSerializer, StudentSerializer, VenueSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
@@ -38,6 +38,11 @@ class LectureDetail(generics.RetrieveUpdateDestroyAPIView):
 class StudentViewSet(generics.ListCreateAPIView):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
+
+
+class VenueViewSet(generics.ListCreateAPIView):
+    queryset = Venue.objects.all()
+    serializer_class = VenueSerializer
 
 
 class StudentGroupViewSet(generics.ListCreateAPIView):
