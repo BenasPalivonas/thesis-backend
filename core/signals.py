@@ -2,6 +2,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import Group, Permission
 from core.models import Assignment, Lecture, LectureSubject, Lecturer
+from core.serializers import AssignmentSerializer
 from core.views import send_notification
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -11,9 +12,8 @@ from django.db.models.signals import post_migrate
 @receiver(post_save, sender=Assignment)
 def mymodel_created(sender, instance, created, **kwargs):
     if created:
-        print('signals work')
-        if instance.created_by_lecturer is not None:
-            send_notification(instance.name, instance.details)
+        if instance.name is not None:
+            send_notification(instance)
 
 
 def create_group(sender, **kwargs):
@@ -56,7 +56,7 @@ def create_group(sender, **kwargs):
                               delete_perm_lecture, delete_perm_lecture_subject, view_perm_lecture, view_perm_lecture_subject)
 
 
-@receiver(post_save, sender=Lecturer)
+@ receiver(post_save, sender=Lecturer)
 def mymodel_created(sender, instance, created, **kwargs):
     if created:
         print('signals work')

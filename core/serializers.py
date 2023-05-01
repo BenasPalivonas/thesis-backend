@@ -52,6 +52,7 @@ class AssignmentSerializer(serializers.ModelSerializer):
     subject = LectureSubjectSerializer()
     lecturer = LecturerSerializer()
     venue = VenueSerializer()
+    student_groups = StudentGroupSerializer(many=True)
 
     class Meta:
         model = Assignment

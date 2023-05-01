@@ -104,6 +104,8 @@ class Assignment(models.Model):
     completed = models.BooleanField(default=False, null=False)
     lecturer = models.ForeignKey(
         Lecturer, on_delete=models.CASCADE, related_name='assignments', null=True, blank=True)
+    student_groups = models.ManyToManyField(
+        StudentGroup, blank=False)
 
     def __str__(self):
         return self.name
@@ -111,6 +113,6 @@ class Assignment(models.Model):
     def clean(self):
         super().clean()
 
-        if self.created_by_lecturer and self.created_by_student:
-            raise forms.ValidationError(
-                'An assignment cannot be created by both a lecturer and a student.')
+        # if self.created_by_lecturer and self.created_by_student:
+        #     raise forms.ValidationError(
+        #         'An assignment cannot be created by both a lecturer and a student.')

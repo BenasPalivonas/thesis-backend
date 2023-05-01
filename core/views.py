@@ -1,3 +1,4 @@
+from django.forms import model_to_dict
 from rest_framework import generics, viewsets
 from .models import Assignment, Venue, Lecture, LectureSubject, Lecturer, Student, StudentGroup
 from .serializers import AssignmentCreateSerializer, AssignmentSerializer, LectureSerializer, LectureSubjectSerializer, LecturerSerializer, StudentGroupSerializer, StudentSerializer, VenueSerializer
@@ -9,6 +10,7 @@ from drf_yasg.utils import swagger_auto_schema
 from django.http import HttpResponse
 import requests
 import json
+from django.core import serializers
 
 from core import models
 
@@ -94,7 +96,7 @@ class LoginView(APIView):
         return Response({'success': True, 'id': student.id, 'student_group': student.student_group.name, 'student_number': student.username})
 
 
-def send_notification(message_title, message_desc):
+def send_notification(instance):
     fcm_api = "AAAAS-Mm1Wc:APA91bE2r9SQh-oi1vnLtKQqcX_IczSv06Q_TisEIa54vFvvhXbPlNxZ4lOr-KbYP7_Ae44decZdusULdYmZhhFSx0Zv6cutcfzEODiJwQ1av8u0TKr4xvDpjIBPhhIOUUJxQbh5Vysi"
     # url = "https://fcm.googleapis.com/fcm/send"
 
@@ -104,19 +106,21 @@ def send_notification(message_title, message_desc):
 
     data = {
         "priority": "high",
-        "title": message_title,
-        "body": message_desc
-    }
+        "id": instance.id,
 
+        # "title": instance.name,
+        # "body": instance.details
+    }
+    # find the groups create a list, serialize it and send it seperately with name and details
     notification = {
-        "body": message_desc,
-        "title": message_title,
+        "title": instance.name,
+        "body": instance.details,
     }
 
     data = {
         'to': 'dnpFsBiuQNGbYnIa2h6ZJe:APA91bHqRE8tclAXbYvWTt-Yx2iEfdnz5WgGNyT3WqpmxxRwOVE5yuWm8S5BEWoO4NeO4mERnexI5BZU5MX9o0UMHDVYgU0KJHJFfaKgmnZbGoLpB20W9EWe9HLPliZE2__GQ4wgMvdu',
         'data': data,
-        'notification': notification
+        'notification': notification,
     }
     response = requests.post(
         'https://fcm.googleapis.com/fcm/send', json=data, headers=headers)
