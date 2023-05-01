@@ -96,7 +96,7 @@ class LoginView(APIView):
         return Response({'success': True, 'id': student.id, 'student_group': student.student_group.name, 'student_number': student.username})
 
 
-def send_notification(instance):
+def send_notification(instance, created):
     fcm_api = "AAAAS-Mm1Wc:APA91bE2r9SQh-oi1vnLtKQqcX_IczSv06Q_TisEIa54vFvvhXbPlNxZ4lOr-KbYP7_Ae44decZdusULdYmZhhFSx0Zv6cutcfzEODiJwQ1av8u0TKr4xvDpjIBPhhIOUUJxQbh5Vysi"
     # url = "https://fcm.googleapis.com/fcm/send"
 
@@ -107,14 +107,17 @@ def send_notification(instance):
     data = {
         "priority": "high",
         "id": instance.id,
-
-        # "title": instance.name,
-        # "body": instance.details
     }
-    # find the groups create a list, serialize it and send it seperately with name and details
+    title = ""
+    body = instance.name
+    if (created):
+        title = "New assignment"
+    else:
+        title = "Your Assignment was updated"
+
     notification = {
-        "title": instance.name,
-        "body": instance.details,
+        "title": title,
+        "body": body,
     }
 
     data = {
@@ -124,6 +127,7 @@ def send_notification(instance):
     }
     response = requests.post(
         'https://fcm.googleapis.com/fcm/send', json=data, headers=headers)
+    print('SENDING')
     if response.status_code == 200:
         print('FCM message sent successfully')
     else:

@@ -11,9 +11,8 @@ from django.db.models.signals import post_migrate
 
 @receiver(post_save, sender=Assignment)
 def mymodel_created(sender, instance, created, **kwargs):
-    if created:
-        if instance.name is not None:
-            send_notification(instance)
+    if instance.name is not None:
+        send_notification(instance, created)
 
 
 def create_group(sender, **kwargs):
