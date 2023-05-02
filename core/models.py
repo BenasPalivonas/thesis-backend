@@ -100,10 +100,9 @@ class Assignment(models.Model):
     due_date = models.DateTimeField(blank=False, null=False)
     details = models.TextField(blank=False, null=False)
     venue = models.ForeignKey(
-        Venue, on_delete=models.CASCADE, related_name='assignments', null=True, blank=True)
-    completed = models.BooleanField(default=False, null=False)
+        Venue, on_delete=models.CASCADE, related_name='assignments', null=False, blank=False)
     lecturer = models.ForeignKey(
-        Lecturer, on_delete=models.CASCADE, related_name='assignments', null=True, blank=True)
+        Lecturer, on_delete=models.CASCADE, related_name='assignments', null=False, blank=False)
     student_groups = models.ManyToManyField(
         StudentGroup, blank=False)
 
@@ -113,6 +112,25 @@ class Assignment(models.Model):
     def clean(self):
         super().clean()
 
-        # if self.created_by_lecturer and self.created_by_student:
-        #     raise forms.ValidationError(
-        #         'An assignment cannot be created by both a lecturer and a student.')
+
+class Grade(models.Model):
+    GRADE_CHOICES = (
+        (1, '1'),
+        (2, '2'),
+        (3, '3'),
+        (4, '4'),
+        (5, '5'),
+        (6, '6'),
+        (7, '7'),
+        (8, '8'),
+        (9, '9'),
+        (10, '10'),
+    )
+    grade = models.IntegerField(choices=GRADE_CHOICES)
+    assignment = models.ForeignKey(
+        Assignment, on_delete=models.CASCADE, related_name='grades')
+    student = models.ForeignKey(
+        Student, on_delete=models.CASCADE, related_name='grade')
+
+    def __str__(self):
+        return f'Assignment: {self.assignment} - Student: {self.student.username} - Grade: {self.grade}'

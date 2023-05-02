@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Assignment, LectureSubject, StudentGroup, Lecture, Lecturer, Student, Venue
+from .models import Assignment, Grade, LectureSubject, StudentGroup, Lecture, Lecturer, Student, Venue
 
 
 class LecturerSerializer(serializers.ModelSerializer):
@@ -48,15 +48,26 @@ class StudentSerializer(serializers.ModelSerializer):
                   'email', 'student_group', 'password']
 
 
+class GradeSerializer(serializers.ModelSerializer):
+    student = StudentSerializer()
+
+    class Meta:
+        model = Grade
+
+        fields = ('id', 'student', 'grade')
+
+
 class AssignmentSerializer(serializers.ModelSerializer):
     subject = LectureSubjectSerializer()
     lecturer = LecturerSerializer()
     venue = VenueSerializer()
     student_groups = StudentGroupSerializer(many=True)
+    grades = GradeSerializer(many=True, read_only=True)
 
     class Meta:
         model = Assignment
-        fields = '__all__'
+        fields = [
+            'name', 'subject', 'due_date', 'details', 'venue', 'lecturer', 'student_groups', 'grades']
 
 
 class AssignmentCreateSerializer(serializers.ModelSerializer):
@@ -78,4 +89,4 @@ class AssignmentCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Assignment
         fields = ['name', 'due_date', 'details',
-                  'completed', 'subject_id', 'student_id']
+                  'subject_id', 'student_id']

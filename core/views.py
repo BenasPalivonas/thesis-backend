@@ -96,7 +96,7 @@ class LoginView(APIView):
         return Response({'success': True, 'id': student.id, 'student_group': student.student_group.name, 'student_number': student.username})
 
 
-def send_notification(instance, created):
+def send_notification(instance, created, is_grade, assignment_id):
     fcm_api = "AAAAS-Mm1Wc:APA91bE2r9SQh-oi1vnLtKQqcX_IczSv06Q_TisEIa54vFvvhXbPlNxZ4lOr-KbYP7_Ae44decZdusULdYmZhhFSx0Zv6cutcfzEODiJwQ1av8u0TKr4xvDpjIBPhhIOUUJxQbh5Vysi"
     # url = "https://fcm.googleapis.com/fcm/send"
 
@@ -104,26 +104,39 @@ def send_notification(instance, created):
         "Content-Type": "application/json",
         "Authorization": 'key='+fcm_api}
 
+    body = ''
+    if (is_grade):
+        body = instance.assignment.name
+    else:
+        body = instance.name
+
     data = {
         "priority": "high",
-        "id": instance.id,
+        "id": assignment_id,
     }
     title = ""
-    body = instance.name
+
     if (created):
-        title = "New assignment"
+        if (is_grade):
+            title = "New grade for your assignment"
+        else:
+            title = "New assignment"
     else:
-        title = "Your Assignment was updated"
+        if (is_grade):
+            title = "Your grade for an assignment was updated"
+        else:
+            title = "Your Assignment was updated"
 
     notification = {
         "title": title,
         "body": body,
     }
-
+    print(is_grade)
     data = {
         'to': 'dnpFsBiuQNGbYnIa2h6ZJe:APA91bHqRE8tclAXbYvWTt-Yx2iEfdnz5WgGNyT3WqpmxxRwOVE5yuWm8S5BEWoO4NeO4mERnexI5BZU5MX9o0UMHDVYgU0KJHJFfaKgmnZbGoLpB20W9EWe9HLPliZE2__GQ4wgMvdu',
         'data': data,
         'notification': notification,
+        'is_grade': is_grade
     }
     response = requests.post(
         'https://fcm.googleapis.com/fcm/send', json=data, headers=headers)

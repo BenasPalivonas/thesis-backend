@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import Group, Permission
-from core.models import Assignment, Lecture, LectureSubject, Lecturer
+from core.models import Assignment, Grade, Lecture, LectureSubject, Lecturer
 from core.serializers import AssignmentSerializer
 from core.views import send_notification
 from django.contrib.auth.models import User
@@ -12,7 +12,15 @@ from django.db.models.signals import post_migrate
 @receiver(post_save, sender=Assignment)
 def mymodel_created(sender, instance, created, **kwargs):
     if instance.name is not None:
-        send_notification(instance, created)
+        send_notification(instance, created, is_grade=False,
+                          assignment_id=instance.id)
+
+
+@receiver(post_save, sender=Grade)
+def mymodel_created(sender, instance, created, **kwargs):
+    if instance.grade is not None:
+        send_notification(instance, created, is_grade=True,
+                          assignment_id=instance.assignment.id)
 
 
 def create_group(sender, **kwargs):
