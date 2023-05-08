@@ -17,7 +17,6 @@ urlpatterns = [
          LectureSubjectGroupViewSet.as_view(), name='assigments_list'),
     path('lecture_subjects/<int:pk>/', LectureSubjectGroupViewSet.as_view(),
          name='assigments_list'),
-    path('send/', send),
 
     path('login/',
          LoginView.as_view(), name='login')

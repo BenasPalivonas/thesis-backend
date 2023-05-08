@@ -120,7 +120,7 @@ def send_notification(instance, created, is_grade, assignment_id):
         if (is_grade):
             title = "New grade for your assignment"
         else:
-            title = "New assignment"
+            title = "Naujas atsiskaitymas"
     else:
         if (is_grade):
             title = "Your grade for an assignment was updated"
@@ -189,9 +189,3 @@ def schedule_fcm_message(message_title, message_body, scheduled_time):
 #     scheduled_time = models.DateTimeField()
 #     fcm_message_id = models.CharField(max_length=255, null=True, blank=True)
 #     status = models.CharField(max_length=7, choices=STATUS_CHOICES, default=PENDING)
-
-
-def send(request):
-    send_notification('Second Test',
-                      'Second Test')
-    return HttpResponse("sent")
