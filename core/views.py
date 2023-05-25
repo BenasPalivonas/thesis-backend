@@ -118,14 +118,14 @@ def send_notification(instance, created, is_grade, assignment_id):
 
     if (created):
         if (is_grade):
-            title = "New grade for your assignment"
+            title = "Naujas pažymis"
         else:
             title = "Naujas atsiskaitymas"
     else:
         if (is_grade):
             title = "Your grade for an assignment was updated"
         else:
-            title = "Your Assignment was updated"
+            title = "Atnaujintas atsiskaitymas"
 
     notification = {
         "title": title,

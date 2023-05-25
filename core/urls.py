@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import AssignmentDetail, AssignmentGroupCreateViewSet, AssignmentGroupViewSet, LectureDetail, LectureSubjectGroupViewSet, LectureViewSet, LecturerList, LecturerDetail, LoginView, StudentViewSet, send
+from .views import AssignmentDetail, AssignmentGroupCreateViewSet, AssignmentGroupViewSet, LectureDetail, LectureSubjectGroupViewSet, LectureViewSet, LecturerList, LecturerDetail, LoginView, StudentViewSet
 
 urlpatterns = [
     path('lecturers/', LecturerList.as_view(), name='lecturer_list'),
